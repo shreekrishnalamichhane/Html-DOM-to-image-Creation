@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>div to image</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <script type="text/javascript" src="js/yui.js"></script>
+
+
+  <script type="text/javascript" src="js/dom-to-image.min.js"></script>
+  <script type="text/javascript" src="js/FileSaver.min.js"></script>
+  <link rel='stylesheet' href='css/bootstrap.min.css'>
+  <link rel='stylesheet' href='css/style.css'>
+  <!-- <link rel='stylesheet' href='css/animate-heading.css'> -->
+  <link rel='stylesheet' href='css/dark.css'>
+  <link rel="stylesheet" href="css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css">
+
+
+  <script id="insert"></script>
+
+
+  <script>
+    const customConsole = (w) => {
+      const pushToConsole = (payload, type) => {
+        w.parent.postMessage({
+          console: {
+            payload: payload,
+            type: type
+          }
+        }, "*")
+      }
+
+      w.onerror = (message, url, line, column) => {
+        // the line needs to correspond with the editor panel
+        // unfortunately this number needs to be altered every time this view is changed
+        line = line - 70
+        if (line < 0) {
+          pushToConsole(message, "error")
+        } else {
+          pushToConsole(`[${line}:${column}] ${message}`, "error")
+        }
+      }
+
+      let console = (function (systemConsole) {
+        return {
+          log: function () {
+            let args = Array.from(arguments)
+            pushToConsole(args, "log")
+            systemConsole.log.apply(this, args)
+          },
+          info: function () {
+            let args = Array.from(arguments)
+
+            pushToConsole(args, "info")
+            systemConsole.info.apply(this, args)
+          },
+          warn: function () {
+            let args = Array.from(arguments)
+            pushToConsole(args, "warn")
+            systemConsole.warn.apply(this, args)
+          },
+          error: function () {
+            let args = Array.from(arguments)
+            pushToConsole(args, "error")
+            systemConsole.error.apply(this, args)
+          },
+          system: function () {
+            let args = Array.from(arguments)
+            pushToConsole(args, "system")
+          }
+        }
+      }(window.console))
+
+      window.console = console
+
+      console.system("Running fiddle")
+    }
+
+    if (window.parent) {
+      customConsole(window)
+    }
+  </script>
+</head>
+
+<body class="d-flex flex-column justify-content-center align-items-center">
+  <div class="space-10"></div>
+  <div>
+    <button id="downloadBtn" class="btn">download img</button>
+    <button id="copyBtn" class="btn">Copy text</button>
+  </div>
+  <div class="space-30"></div>
+
+  <div id="update_img" style='height:940px; width:788px;'>
+    <div class='container1' id="update_img" style='height:940px; width:788px;'>
+      <div class="container-fluid">
+        <!-- introduction area -->
+        <div class='space-20'></div>
+        <div class='row'>
+          <div class='col-12'>
+            <h2 class='text-center text-white'>Regular Covid-19 Update</h2>
+          </div>
+        </div>
+        <h6 class="text-right updated_at">Updated: <span id="updated_at"></span>&nbsp;&nbsp;</h6>
+        <div class='space-10'></div>
+        <div class="row">
+          <div class="col heading">
+            <h4 class="text-center title">Nepal Cases/ नेपालको तथ्याड़क</h4>
+          </div>
+        </div>
+        <div class="space-10"></div>
+        <div class='row'>
+          <div class='col-6'>
+            <div class="box">
+              <h3 class='text-center text-white'>Total Cases / कुल संख्या </h3>
+              <h4 class='text-center text-white'><span id="tested_positive"></span></h4>
+              <p class='text-center text-white'><span id="tested_positive_nepali" class="nepali"></span></p>
+            </div>
+          </div>
+          <div class='col-6'>
+            <div class="box">
+              <h3 class='text-center text-white'>Recovered / निको भएको</h3>
+              <h4 class='text-center text-white'><span id="recovered"></span></h4>
+              <p class='text-center text-white'><span id="recovered_nepali" class="nepali"></span></p>
+            </div>
+          </div>
+          <div class='col-6'>
+            <div class="box">
+              <h3 class='text-center text-white'>Active Cases / सक्रिय</h3>
+              <h4 class='text-center text-white'><span id="in_isolation"></span></h4>
+              <p class='text-center text-white'><span id="in_isolation_nepali" class="nepali"></span></p>
+            </div>
+          </div>
+          <div class='col-6'>
+            <div class="box">
+              <h3 class='text-center text-white'>Deaths / मृत्यु</h3>
+              <h4 class='text-center text-white'><span id="deaths"></span></h4>
+              <p class='text-center text-white'><span id="deaths_nepali" class="nepali"></span></p>
+            </div>
+          </div>
+        </div>
+        <div class="space-20"></div>
+        <!-- World data -->
+        <div class="row">
+          <div class="col heading">
+            <h4 class="text-center title">World Cases / विश्व तथ्याड़क</h4>
+          </div>
+        </div>
+        <div class='space-10'></div>
+        <div class='row'>
+          <div class='col-6'>
+            <div class="box">
+              <h3 class='text-center text-white'>Total Cases / कुल संख्या </h3>
+              <h4 class='text-center text-white'><span id="world_cases"></span></h4>
+              <p class='text-center text-white'><span id="world_cases_nepali" class="nepali"></span></p>
+            </div>
+          </div>
+          <div class='col-6'>
+            <div class="box">
+              <h3 class='text-center text-white'>Recovered / निको भएको</h3>
+              <h4 class='text-center text-white'><span id="world_recovered"></span></h4>
+              <p class='text-center text-white'><span id="world_recovered_nepali" class="nepali"></span></p>
+            </div>
+          </div>
+          <div class='col-6'>
+            <div class="box">
+              <h3 class='text-center text-white'>Active Cases / सक्रिय </h3>
+              <h4 class='text-center text-white'><span id="world_active"></span></h4>
+              <p class='text-center text-white'><span id="world_active_nepali" class="nepali"></span></p>
+            </div>
+          </div>
+          <div class='col-6'>
+            <div class="box">
+              <h3 class='text-center text-white'>Deaths / मृत्यु</h3>
+              <h4 class='text-center text-white'><span id="world_deaths"></span></h4>
+              <p class='text-center text-white'><span id="world_deaths_nepali" class="nepali"></span></p>
+            </div>
+          </div>
+        </div>
+        <div class="space-10"></div>
+        <h5 class="text-right" style="font-weight: 400;">Facebook: &nbsp;https://www.facebook.com/coronaliveupdatenepal
+        </h5>
+      </div>
+    </div>
+  </div>
+  <div class="row py-3">
+    <div class="col">
+      <textarea name="text_to_copy" class="text_to_copy p-3" id="text_to_copy" cols="20" rows=""></textarea>
+    </div>
+  </div>
+  <script type="text/javascript">
+    var node = document.getElementById('update_img');
+    var btn = document.getElementById('downloadBtn');
+    btn.onclick = function () {
+      domtoimage.toBlob(document.getElementById('update_img'))
+        .then(function (blob) {
+          window.saveAs(blob, 'cov_update.png');
+        });
+    }
+  //]]></script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent) {
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: ""
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+    integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+  <script>
+
+  </script>
+  <script src="js/custom-spacing.js"></script>
+  <script src="js/text-to-copy.js"></script>
+  <script src="js/api-data-fetch-nepal.js"></script>
+  <script src="js/api-data-fetch-world.js"></script>
+</body>
+
+</html>
